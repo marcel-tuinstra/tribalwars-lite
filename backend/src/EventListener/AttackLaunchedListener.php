@@ -4,14 +4,16 @@ namespace App\EventListener;
 
 use App\Event\AttackLaunchedEvent;
 use App\Service\CombatService;
+use App\Service\NotificationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 final class AttackLaunchedListener
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private readonly CombatService   $combatService
+        private readonly LoggerInterface     $logger,
+        private readonly CombatService       $combatService,
+        private readonly NotificationService $notificationService
     )
     {
     }
@@ -29,5 +31,16 @@ final class AttackLaunchedListener
         ));
 
         $this->combatService->resolveCombat($attacker, $defender);
+
+        if ($defender->getPlayer()) {
+            $this->notificationService->createNotification(
+                $defender->getPlayer(),
+                'attack_received',
+                [
+                    'from'   => $attacker->getName(),
+                    'troops' => $attacker->getTroops()->toArray(),
+                ]
+            );
+        }
     }
 }

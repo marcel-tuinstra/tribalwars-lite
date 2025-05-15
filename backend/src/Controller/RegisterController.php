@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class RegisterController extends AbstractController
+class RegisterController extends AbstractController
 {
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): JsonResponse

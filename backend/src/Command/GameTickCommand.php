@@ -34,7 +34,6 @@ class GameTickCommand extends Command
             $io->info(sprintf('Tick processed for village [%s]', $village->getId()));
         }
 
-
         $io->success(sprintf('Tick processed for [%d] villages.', count($villages)));
 
         return Command::SUCCESS;

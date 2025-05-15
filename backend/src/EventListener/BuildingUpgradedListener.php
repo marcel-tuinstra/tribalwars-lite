@@ -30,7 +30,6 @@ final class BuildingUpgradedListener
             $building->getVillage()->getId()
         ));
 
-
         if ($player) {
             $this->notificationService->createNotification($player, 'building_upgraded', [
                 'village'  => $village->getName(),
