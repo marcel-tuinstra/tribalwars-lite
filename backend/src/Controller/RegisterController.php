@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Player;
+use App\Service\PlayerService;
+use App\Service\WorldMapService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegisterController extends AbstractController
 {
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em, PlayerService $playerService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -30,6 +32,8 @@ class RegisterController extends AbstractController
 
         $em->persist($player);
         $em->flush();
+
+        $playerService->createInitialVillage($player, rand(1, WorldMapService::GRID), rand(1, WorldMapService::GRID));
 
         return $this->json(['status' => 'Player registered'], 201);
     }

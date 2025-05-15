@@ -16,7 +16,7 @@ class PlayerService
     {
         $village = new Village('Village of ' . $player->getEmail(), $x, $y);
         $village->setPlayer($player);
-        // initialize with defaults (buildings/resources/troops at 0)
+
         $this->em->persist($village);
         $this->em->flush();
 

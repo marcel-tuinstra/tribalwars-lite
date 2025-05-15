@@ -8,7 +8,7 @@ use App\Repository\VillageRepository;
 
 class WorldMapService
 {
-    private const GRID = '100';
+    public const GRID = '100';
 
     public function __construct(private readonly VillageRepository $villageRepository)
     {

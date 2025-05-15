@@ -30,6 +30,11 @@ final class Category implements ValueObjectInterface
         }
     }
 
+    public static function fromString(string $value): self
+    {
+        return new self($value);
+    }
+
     public function value(): string
     {
         return $this->value;

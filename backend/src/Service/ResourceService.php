@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Collection\BuildingCollection;
+use App\Entity\Resource;
 use App\Entity\Village;
 use App\ValueObject\Building\Category as BuildingCategory;
 use App\ValueObject\Resource\Category as ResourceCategory;
@@ -26,19 +27,27 @@ class ResourceService
             ResourceCategory::iron()->value() => BuildingCategory::ironMine(),
         ];
 
+        /** @var Resource $resource */
         foreach ($village->getResources() as $resource) {
-            $baseRate = $productionRates[$resource->getCategory()->value] ?? 0;
+            $baseRate = $productionRates[$resource->getCategory()->value()] ?? 0;
 
-            $buildingCategory = $resourceToBuildingCategory[$resource->getCategory()->value] ?? null;
+            $buildingCategory = $resourceToBuildingCategory[$resource->getCategory()->value()] ?? null;
             if ($buildingCategory === null) {
                 continue;
             }
 
-            $building   = $buildingCollection->getBuildingByCategory($buildingCategory);
+            $building = $buildingCollection->getBuildingByCategory($buildingCategory);
             $efficiency = 1 + ($building->getLevel() * 0.05);
             $production = $baseRate * $building->getLevel() * $efficiency;
 
             $resource->increaseAmount($production);
+
+            // Cap resource amount to warehouse capacity
+            $warehouseCap = $this->getWarehouseCap($village);
+
+            if ($resource->getAmount() > $warehouseCap) {
+                $resource->setAmount($warehouseCap);
+            }
         }
     }
 

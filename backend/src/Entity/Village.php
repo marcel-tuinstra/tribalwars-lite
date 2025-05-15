@@ -7,6 +7,9 @@ use App\Entity\Interface\TimestampableInterface;
 use App\Entity\Trait\EqualsTrait;
 use App\Entity\Trait\TimestampableTrait;
 use App\Repository\VillageRepository;
+use App\ValueObject\Building\Category as BuildingCategory;
+use App\ValueObject\Resource\Category as ResourceCategory;
+use App\ValueObject\Troop\Role as TroopRole;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -60,9 +63,26 @@ class Village implements IdentifiableInterface, TimestampableInterface
         $this->x    = $x;
         $this->y    = $y;
 
+        // Buildings
         $this->buildings = new ArrayCollection();
+        foreach (BuildingCategory::getValuesAsObjects() as $category) {
+            $building = new Building($this, $category);
+            $this->addBuilding($building);
+        }
+
+        // Resources
         $this->resources = new ArrayCollection();
-        $this->troops    = new ArrayCollection();
+        foreach (ResourceCategory::getValuesAsObjects() as $category) {
+            $resource = new Resource($this, $category);
+            $this->addResource($resource);
+        }
+
+        // Troops
+        $this->troops = new ArrayCollection();
+        foreach (TroopRole::getValuesAsObjects() as $role) {
+            $troop = new Troop($this, $role);
+            $this->addTroop($troop);
+        }
     }
 
     // Getters
