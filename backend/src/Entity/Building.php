@@ -10,8 +10,8 @@ use App\Repository\BuildingRepository;
 use App\ValueObject\Building\Category;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Ulid;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
 class Building implements IdentifiableInterface, TimestampableInterface
 {

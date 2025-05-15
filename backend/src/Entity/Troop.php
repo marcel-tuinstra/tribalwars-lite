@@ -12,6 +12,7 @@ use App\ValueObject\Troop\Role;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: TroopRepository::class)]
 class Troop implements IdentifiableInterface, TimestampableInterface
 {

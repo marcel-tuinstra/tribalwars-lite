@@ -10,6 +10,7 @@ use App\Repository\ResourceRepository;
 use App\ValueObject\Resource\Category;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ResourceRepository::class)]
 class Resource implements IdentifiableInterface, TimestampableInterface
 {

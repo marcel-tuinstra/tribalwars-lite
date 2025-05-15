@@ -13,8 +13,8 @@ use App\ValueObject\Troop\Role as TroopRole;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Ulid;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: VillageRepository::class)]
 class Village implements IdentifiableInterface, TimestampableInterface
 {
@@ -42,19 +42,19 @@ class Village implements IdentifiableInterface, TimestampableInterface
     /**
      * @var Collection<int, Building>
      */
-    #[ORM\OneToMany(targetEntity: Building::class, mappedBy: 'village')]
+    #[ORM\OneToMany(targetEntity: Building::class, mappedBy: 'village', cascade: ['persist'])]
     private Collection $buildings;
 
     /**
      * @var Collection<int, Resource>
      */
-    #[ORM\OneToMany(targetEntity: Resource::class, mappedBy: 'village')]
+    #[ORM\OneToMany(targetEntity: Resource::class, mappedBy: 'village', cascade: ['persist'])]
     private Collection $resources;
 
     /**
      * @var Collection<int, Troop>
      */
-    #[ORM\OneToMany(targetEntity: Troop::class, mappedBy: 'village')]
+    #[ORM\OneToMany(targetEntity: Troop::class, mappedBy: 'village', cascade: ['persist'])]
     private Collection $troops;
 
     public function __construct(string $name, int $x, int $y)

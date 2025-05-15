@@ -28,6 +28,7 @@ class PlayerService
         return [
             'id'       => $player->getId(),
             'email'    => $player->getEmail(),
+            'roles'    => $player->getRoles(),
             'villages' => array_map(fn($v) => [
                 'id'   => $v->getId(),
                 'name' => $v->getName(),

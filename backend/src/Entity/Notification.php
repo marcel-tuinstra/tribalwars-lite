@@ -6,10 +6,9 @@ use App\Entity\Interface\IdentifiableInterface;
 use App\Entity\Interface\TimestampableInterface;
 use App\Entity\Trait\TimestampableTrait;
 use App\Repository\NotificationRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Uuid;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification implements IdentifiableInterface, TimestampableInterface
 {
