@@ -3,33 +3,37 @@
 namespace App\Controller;
 
 use App\Entity\Village;
+use App\Repository\VillageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class VillageController extends AbstractController
 {
-    #[Route('/api/village/{id}', name: 'api_village', methods: ['GET'])]
-    public function getVillage(Village $village): JsonResponse
+    public function __construct(private readonly VillageRepository $villageRepository)
     {
-        return $this->json([
-            'id'        => $village->getId(),
-            'name'      => $village->getName(),
-            'resources' => array_map(fn($resource) => [
-                'category' => $resource->getCategory()->value,
-                'amount'   => $resource->getAmount(),
-            ], $village->getResources()->toArray()),
-            'buildings' => array_map(fn($building) => [
-                'category'        => $building->getCategory()->value(),
-                'level'           => $building->getLevel(),
-                'upgradeFinishAt' => $building->getUpgradeFinishAt()?->format(DATE_ATOM),
-            ], $village->getBuildings()->toArray()),
-            'troops'    => array_map(fn($troop) => [
-                'role'             => $troop->getRole()->value(),
-                'amount'           => $troop->getAmount(),
-                'trainingFinishAt' => $troop->getTrainingFinishAt()?->format(DATE_ATOM),
-                'queue'            => $troop->getTrainingQueue(),
-            ], $village->getTroops()->toArray()),
-        ]);
+    }
+
+    #[Route('/api/villages', name: 'api_villages', methods: ['GET'])]
+    public function getVillages(#[CurrentUser] $player): JsonResponse
+    {
+        return $this->json($this->villageRepository->findAllVillagesByPlayer($player));
+    }
+
+    #[Route('/api/villages/all', name: 'api_villages_all', methods: ['GET'])]
+    public function getVillagesAll(#[CurrentUser] $player): JsonResponse
+    {
+        return $this->json($this->villageRepository->findAll());
+    }
+
+    #[Route('/api/village/{id}', name: 'api_village', methods: ['GET'])]
+    public function getVillage(#[CurrentUser] $player, Village $village): JsonResponse
+    {
+        if (!$village->isOwnedBy($player)) {
+            $this->json(['error' => 'Not your village'], 403);
+        }
+
+        return $this->json($village);
     }
 }

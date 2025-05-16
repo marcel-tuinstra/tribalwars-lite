@@ -1,13 +1,13 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import {useAuthStore} from '@/stores/auth';
-import Dashboard from '../views/Dashboard.vue'
+import Overview from '../views/Overview.vue'
 import Map from '../views/Map.vue'
 import Login from '../views/Login.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    {path: '/', component: Dashboard, meta: { requiresAuth: true }},
+    {path: '/', component: Overview, meta: { requiresAuth: true }},
     {path: '/map', component: Map, meta: { requiresAuth: true }},
     {path: '/login', component: Login}
   ]

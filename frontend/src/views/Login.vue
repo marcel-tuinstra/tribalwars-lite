@@ -23,9 +23,9 @@ const handleLogin = async () => {
   <div class="max-w-md mx-auto mt-20 p-6 border rounded shadow">
     <h1 class="text-2xl mb-4">Login</h1>
     <form @submit.prevent="handleLogin">
+      // test@user.dev
       <input v-model="email" type="email" placeholder="Email" class="mb-2 w-full border p-2"/>
-      <input v-model="password" type="password" placeholder="Password"
-             class="mb-2 w-full border p-2"/>
+      <input v-model="password" type="password" placeholder="Password" class="mb-2 w-full border p-2"/>
       <button type="submit" class="w-full bg-blue-500 text-white p-2">Login</button>
     </form>
     <p v-if="error" class="text-red-500 mt-2">{{ error }}</p>

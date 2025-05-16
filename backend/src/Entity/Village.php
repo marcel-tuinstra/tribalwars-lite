@@ -197,4 +197,9 @@ class Village implements IdentifiableInterface, TimestampableInterface
     {
         return $this->player === null;
     }
+
+    public function isOwnedBy(Player $player): bool
+    {
+        return Player::equals($this->player, $player);
+    }
 }
