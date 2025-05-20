@@ -19,7 +19,7 @@
           :class="['cursor-pointer hover:bg-blue-100', selectedVillage.id === village.id ? 'bg-blue-200 font-bold' : '']"
         >
           <td class="px-2 py-1">{{ village.name }}</td>
-          <td class="px-2 py-1">({{ village.coordinates.x }}, {{ village.coordinates.y }})</td>
+          <td class="px-2 py-1">({{ village.x }}, {{ village.y }})</td>
           <td class="px-2 py-1">
             {{ village.resources.find(r => r.category === 'population')?.amount ?? 'N/A' }}
           </td>

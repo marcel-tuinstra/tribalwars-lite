@@ -63,7 +63,7 @@ class ApiController extends AbstractController
         $em->persist($player);
         $em->flush();
 
-        $playerService->createInitialVillage($player, rand(1, WorldMapService::GRID), rand(1, WorldMapService::GRID));
+        $playerService->createVillage($player);
 
         return $this->json(['status' => 'Player registered'], 201);
     }

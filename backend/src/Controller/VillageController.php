@@ -24,7 +24,7 @@ class VillageController extends AbstractController
     #[Route('/api/villages/all', name: 'api_villages_all', methods: ['GET'])]
     public function getVillagesAll(#[CurrentUser] $player): JsonResponse
     {
-        return $this->json($this->villageRepository->findAll());
+        return $this->json($this->villageRepository->findAllVillageForMapView());
     }
 
     #[Route('/api/village/{id}', name: 'api_village', methods: ['GET'])]

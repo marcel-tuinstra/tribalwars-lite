@@ -5,16 +5,23 @@ namespace App\Service;
 use App\Entity\Player;
 use App\Entity\Village;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 
 class PlayerService
 {
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em, private readonly WorldMapService $worldMapService)
     {
     }
 
-    public function createInitialVillage(Player $player, int $x, int $y): Village
+    public function createVillage(Player $player): Village
     {
-        $village = new Village('Village of ' . $player->getEmail(), $x, $y);
+        $coords = $this->worldMapService->findAvailableCoordinateWithinExpandingRadius();
+
+        if (!$coords) {
+            throw new RuntimeException('No available space for player village.');
+        }
+
+        $village = new Village('Village of ' . $player->getEmail(), $coords['x'], $coords['y']);
         $village->setPlayer($player);
 
         $this->em->persist($village);

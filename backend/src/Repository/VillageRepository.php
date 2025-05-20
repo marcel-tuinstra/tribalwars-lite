@@ -30,6 +30,41 @@ class VillageRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * Returns all village coordinates as an array of ['x' => ..., 'y' => ...].
+     * Optimized to only select x and y columns.
+     *
+     * @return array<int, array{x: int, y: int}>
+     */
+    public function findAllVillageForMapView(): array
+    {
+        $queryBuilder = $this->createQueryBuilder(self::ALIAS)
+            ->select(sprintf('%s.id', self::ALIAS))
+            ->addSelect(sprintf('%s.x', self::ALIAS))
+            ->addSelect(sprintf('%s.y', self::ALIAS))
+            ->leftJoin(sprintf('%s.player', self::ALIAS), 'p')
+            ->addSelect('p.id AS playerId')
+            ->addSelect(sprintf('%s.name', self::ALIAS));
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Returns all village coordinates as an array of ['x' => ..., 'y' => ...].
+     * Optimized to only select x and y columns.
+     *
+     * @return array<int, array{x: int, y: int}>
+     */
+    public function findAllVillageCoordinates(): array
+    {
+        $queryBuilder = $this->createQueryBuilder(self::ALIAS)
+            ->select(sprintf('%s.id', self::ALIAS))
+            ->addSelect(sprintf('%s.x', self::ALIAS))
+            ->addSelect(sprintf('%s.y', self::ALIAS));
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
+
     public function findAllBotVillages(): array
     {
         $queryBuilder = $this->createQueryBuilder(self::ALIAS);

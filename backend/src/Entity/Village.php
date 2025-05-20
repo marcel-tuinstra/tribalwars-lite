@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Table(name: 'village')]
+#[ORM\UniqueConstraint(name: 'village_unique_coordinates', columns: ['x', 'y'])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: VillageRepository::class)]
 class Village implements IdentifiableInterface, TimestampableInterface

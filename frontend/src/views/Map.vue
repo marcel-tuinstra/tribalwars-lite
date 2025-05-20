@@ -1,317 +1,289 @@
 <script setup lang="ts">
-import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { useVillageStore } from '@/stores/village'
-import { useAuthStore } from "@/stores/auth.ts";
-import type { Village } from '@/types/village' // type voor jouw villages (optioneel)
-
-// Stores
+import type { Village } from '@/types/village'
+import {useAuthStore} from "@/stores/auth.ts";
 const auth = useAuthStore();
+
 const villageStore = useVillageStore()
 
-// Constants & State
+const canvas = ref<HTMLCanvasElement | null>(null)
+const cellSize = ref(15)
 const gridSize = 100
-const cellSize = ref<number>(50)
-const totalCells = gridSize * gridSize
+const canvasSize = ref(gridSize * cellSize.value)
 
-const selectedCell = ref<{ x: number | null, y: number | null }>({ x: null, y: null })
-const showDrawer = ref<boolean>(false)
-const mapContainer = ref<HTMLElement | null>(null)
+let ctx: CanvasRenderingContext2D | null = null
+let isDragging = false
+let offsetX = 0
+let offsetY = 0
+let dragStartX = 0
+let dragStartY = 0
 
-const tooltip = ref<{ show: boolean, x: number, y: number, village: Village | null }>({ show: false, x: 0, y: 0, village: null })
-const activeVillage = ref<Village | null>(null)
+const showDrawer = ref(false)
 
-// Functions
-const getCellX = (index: number): number => ((index - 1) % gridSize) + 1
-
-const getCellY = (index: number): number => Math.floor((index - 1) / gridSize) + 1
-
-const selectCell = (x: number, y: number): void => {
-  selectedCell.value = { x, y }
-}
-
-const isVillageCell = (x: number, y: number): boolean => {
-  return villageStore.villages.some(v => v.coordinates.x === x && v.coordinates.y === y)
-}
-
-const toVillageColorClass = (village: object) => {
-  if (!village.player.id) {
-    return 'bg-gray-900';
-  }
-
-  return isPlayerVillage(village) ? 'bg-cyan-500' : 'bg-yellow-500';
-}
-
-const isPlayerVillage = (village: object) => {
-  return village.player?.id === auth.user.id;
-}
-
-const centerMapOnVillage = (village: Village, closeDrawer = false): void => {
-  if (!village?.coordinates) return
-  selectedCell.value = { x: village.coordinates.x, y: village.coordinates.y }
-  nextTick(() => {
-    smoothScrollToCell(village.coordinates.x, village.coordinates.y)
-  })
-  if (closeDrawer) showDrawer.value = false
-}
-
-const smoothScrollToCell = (x: number, y: number): void => {
-  if (!mapContainer.value) return
-  const cellCenterX = (x - 0.5) * cellSize.value
-  const cellCenterY = (y - 0.5) * cellSize.value
-  const container = mapContainer.value
-  const scrollLeft = cellCenterX - container.clientWidth / 2
-  const scrollTop = cellCenterY - container.clientHeight / 2
-  container.scrollTo({ left: scrollLeft, top: scrollTop, behavior: 'smooth' })
-}
-
-const zoomIn = (): void => {
-  if (cellSize.value < 100) cellSize.value += 10
-}
-
-const zoomOut = (): void => {
-  if (cellSize.value > 20) cellSize.value -= 10
-}
-
-// Drag & Pan
-let isPanning = false
-let startX = 0
-let startY = 0
-let scrollLeft = 0
-let scrollTop = 0
-
-const onMouseDown = (e: MouseEvent): void => {
-  if (!mapContainer.value) return
-  isPanning = true
-  startX = e.pageX - mapContainer.value.offsetLeft
-  startY = e.pageY - mapContainer.value.offsetTop
-  scrollLeft = mapContainer.value.scrollLeft
-  scrollTop = mapContainer.value.scrollTop
-}
-
-const onMouseMove = (e: MouseEvent): void => {
-  if (!isPanning || !mapContainer.value) return
-  e.preventDefault()
-  const x = e.pageX - mapContainer.value.offsetLeft
-  const y = e.pageY - mapContainer.value.offsetTop
-  mapContainer.value.scrollLeft = scrollLeft - (x - startX)
-  mapContainer.value.scrollTop = scrollTop - (y - startY)
-}
-
-const onMouseUp = (): void => {
-  isPanning = false
-}
-
-const onTouchStart = (e: TouchEvent): void => {
-  if (e.touches.length !== 1 || !mapContainer.value) return
-  isPanning = true
-  startX = e.touches[0].pageX - mapContainer.value.offsetLeft
-  startY = e.touches[0].pageY - mapContainer.value.offsetTop
-  scrollLeft = mapContainer.value.scrollLeft
-  scrollTop = mapContainer.value.scrollTop
-}
-
-const onTouchMove = (e: TouchEvent): void => {
-  if (!isPanning || !mapContainer.value) return
-  e.preventDefault()
-  const x = e.touches[0].pageX - mapContainer.value.offsetLeft
-  const y = e.touches[0].pageY - mapContainer.value.offsetTop
-  mapContainer.value.scrollLeft = scrollLeft - (x - startX)
-  mapContainer.value.scrollTop = scrollTop - (y - startY)
-}
-
-const onTouchEnd = (): void => {
-  isPanning = false
-}
-
-// Tooltip & Modal
-const showTooltip = (e: MouseEvent, village: Village): void => {
-  tooltip.value = { show: true, x: e.clientX + 10, y: e.clientY + 10, village }
-}
-
-const hideTooltip = (): void => {
-  tooltip.value.show = false
-}
-
-const openVillageModal = (village: Village): void => {
-  activeVillage.value = village
-}
-
-const closeVillageModal = (): void => {
-  activeVillage.value = null
-}
-
-const getVillageAt = (x: number, y: number): Village | undefined => {
-  return villageStore.villages.find(v => v.coordinates.x === x && v.coordinates.y === y)
-}
-
-// Lifecycle
-onMounted(() => {
-  const el = mapContainer.value
-  if (!el) return
-
-  el.addEventListener('mousedown', onMouseDown)
-  el.addEventListener('mousemove', onMouseMove)
-  el.addEventListener('mouseup', onMouseUp)
-  el.addEventListener('mouseleave', onMouseUp)
-
-  el.addEventListener('touchstart', onTouchStart)
-  el.addEventListener('touchmove', onTouchMove, { passive: false })
-  el.addEventListener('touchend', onTouchEnd)
-  el.addEventListener('touchcancel', onTouchEnd)
-
-  villageStore.fetchPlayerVillages()
-  villageStore.fetchAllVillages()
+const hoverVillage = ref<Village | null>(null)
+const tooltip = ref<{ show: boolean, x: number, y: number, village: Village | null }>({
+    show: false,
+    x: 0,
+    y: 0,
+    village: null
 })
 
-onUnmounted(() => {
-  const el = mapContainer.value
-  if (!el) return
+function clampOffset() {
+    if (!canvas.value) return
+    const minX = -gridSize * cellSize.value + canvas.value.width
+    const minY = -gridSize * cellSize.value + canvas.value.height
+    offsetX = Math.max(Math.min(offsetX, 0), minX)
+    offsetY = Math.max(Math.min(offsetY, 0), minY)
+}
 
-  el.removeEventListener('mousedown', onMouseDown)
-  el.removeEventListener('mousemove', onMouseMove)
-  el.removeEventListener('mouseup', onMouseUp)
-  el.removeEventListener('mouseleave', onMouseUp)
+function draw() {
+    if (!ctx || !canvas.value) return
+    const width = canvas.value.width
+    const height = canvas.value.height
+    ctx.clearRect(0, 0, width, height)
 
-  el.removeEventListener('touchstart', onTouchStart)
-  el.removeEventListener('touchmove', onTouchMove)
-  el.removeEventListener('touchend', onTouchEnd)
-  el.removeEventListener('touchcancel', onTouchEnd)
+    ctx.save()
+    ctx.strokeStyle = '#d1fae5'
+    ctx.lineWidth = 1
+    for (let i = 0; i <= gridSize; i++) {
+        const gx = i * cellSize.value + offsetX
+        const gy = i * cellSize.value + offsetY
+        if (gx >= 0 && gx <= width) {
+            ctx.beginPath()
+            ctx.moveTo(gx, 0)
+            ctx.lineTo(gx, height)
+            ctx.stroke()
+        }
+        if (gy >= 0 && gy <= height) {
+            ctx.beginPath()
+            ctx.moveTo(0, gy)
+            ctx.lineTo(width, gy)
+            ctx.stroke()
+        }
+    }
+    ctx.restore()
+
+    for (const village of villageStore.villages) {
+        const { x, y } = village
+        const drawX = (x - 1) * cellSize.value + offsetX
+        const drawY = (y - 1) * cellSize.value + offsetY
+        if (
+            drawX + cellSize.value < 0 || drawX > width ||
+            drawY + cellSize.value < 0 || drawY > height
+        ) continue
+
+        ctx.save()
+        if (!village.playerId) {
+            ctx.fillStyle = '#6b7280'
+        } else {
+            ctx.fillStyle = village.playerId === auth.user.id ? '#06b6d4' : '#facc15'
+        }
+        const padding = cellSize.value * 0.15
+        ctx.fillRect(drawX + padding, drawY + padding, cellSize.value * 0.7, cellSize.value * 0.7)
+        if (hoverVillage.value && hoverVillage.value.id === village.id) {
+            ctx.strokeStyle = '#0ea5e9' // Tailwind blue-500
+            ctx.lineWidth = 2
+            ctx.strokeRect(drawX + padding, drawY + padding, cellSize.value * 0.7, cellSize.value * 0.7)
+        }
+        ctx.restore()
+    }
+}
+
+function onMouseDown(e: MouseEvent) {
+    isDragging = true
+    dragStartX = e.clientX
+    dragStartY = e.clientY
+}
+function onMouseMove(e: MouseEvent) {
+    const rect = canvas.value!.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const village = villageStore.villages.find(v => {
+      const drawX = (v.x - 1) * cellSize.value + offsetX
+      const drawY = (v.y - 1) * cellSize.value + offsetY
+      return (
+        x >= drawX &&
+        x <= drawX + cellSize.value &&
+        y >= drawY &&
+        y <= drawY + cellSize.value
+      )
+    })
+
+    if (isDragging) {
+        const dx = e.clientX - dragStartX
+        const dy = e.clientY - dragStartY
+        dragStartX = e.clientX
+        dragStartY = e.clientY
+        offsetX += dx
+        offsetY += dy
+        clampOffset()
+        draw()
+        tooltip.value.show = false
+    } else if (village) {
+        hoverVillage.value = village
+        tooltip.value = {
+            show: true,
+            x: (village.x - 1) * cellSize.value + offsetX + cellSize.value / 2,
+            y: (village.y - 1) * cellSize.value + offsetY - 10,
+            village
+        }
+        draw()
+    } else {
+        hoverVillage.value = null
+        tooltip.value.show = false
+        draw()
+    }
+}
+function onMouseUp() {
+    isDragging = false
+}
+
+function zoomIn() {
+    if (cellSize.value < 50) {
+        cellSize.value += 5
+        updateCanvasSize()
+    }
+}
+function zoomOut() {
+    if (cellSize.value > 10) {
+        cellSize.value -= 5
+        updateCanvasSize()
+    }
+}
+function updateCanvasSize() {
+    if (!canvas.value) return
+    const ratio = window.devicePixelRatio || 1
+    canvas.value.width = window.innerWidth * ratio
+    canvas.value.height = window.innerHeight * ratio
+    canvas.value.style.width = `${window.innerWidth}px`
+    canvas.value.style.height = `${window.innerHeight}px`
+    ctx = canvas.value.getContext('2d')
+    ctx?.scale(ratio, ratio)
+    clampOffset()
+    draw()
+}
+
+function centerMapOnVillage(village: Village): void {
+    // Center the selected village in the viewport
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    offsetX = vw / 2 - (village.x - 0.5) * cellSize.value
+    offsetY = vh / 2 - (village.y - 0.5) * cellSize.value
+    clampOffset()
+    nextTick(draw)
+    showDrawer.value = false
+}
+
+function onClick(e: MouseEvent) {
+    const rect = canvas.value!.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const village = villageStore.villages.find(v => {
+      const drawX = (v.x - 1) * cellSize.value + offsetX
+      const drawY = (v.y - 1) * cellSize.value + offsetY
+      return (
+        x >= drawX &&
+        x <= drawX + cellSize.value &&
+        y >= drawY &&
+        y <= drawY + cellSize.value
+      )
+    })
+    if (village) {
+        alert(`Clicked on village: ${village.name}`)
+    }
+}
+
+onMounted(async () => {
+    await villageStore.fetchPlayerVillages()
+    await villageStore.fetchAllVillages()
+    if (canvas.value) {
+        const ratio = window.devicePixelRatio || 1
+        canvas.value.width = window.innerWidth * ratio
+        canvas.value.height = window.innerHeight * ratio
+        canvas.value.style.width = `${window.innerWidth}px`
+        canvas.value.style.height = `${window.innerHeight}px`
+        ctx = canvas.value.getContext('2d')
+        ctx?.scale(ratio, ratio)
+        draw()
+    }
 })
 </script>
 
 <template>
-  <div class="flex h-full overflow-hidden">
-    <!-- Sidebar (desktop only) -->
-    <aside class="hidden md:block w-72 bg-blue-50 p-4 overflow-y-auto border-r border-gray-200">
-      <h2 class="font-semibold mb-4">Your Villages</h2>
-      <ul class="space-y-2">
-        <li
-          v-for="village in villageStore.playerVillages"
-          :key="village.id"
-          @click="centerMapOnVillage(village)"
-          class="p-3 bg-white rounded shadow hover:bg-blue-100 cursor-pointer"
-        >
-          <div class="font-semibold">{{ village.name }}</div>
-          <div class="text-sm text-gray-500">Coords: ({{ village.coordinates.x }}, {{ village.coordinates.y }})</div>
-        </li>
-      </ul>
-    </aside>
+    <div class="flex h-full overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="hidden md:block w-72 bg-blue-50 p-4 overflow-y-auto border-r border-gray-200">
+            <h2 class="font-semibold mb-4">Your Villages</h2>
+            <ul class="space-y-2">
+                <li
+                    v-for="village in villageStore.playerVillages"
+                    :key="village.id"
+                    @click="centerMapOnVillage(village)"
+                    class="p-3 bg-white rounded shadow hover:bg-blue-100 cursor-pointer"
+                >
+                    <div class="font-semibold">{{ village.name }}</div>
+                    <div class="text-sm text-gray-500">Coords: ({{ village.x }}, {{ village.y }})</div>
+                </li>
+            </ul>
+            Total Villages: {{ villageStore.villages.length }}
+        </aside>
 
-    <!-- Map grid area -->
-    <main
-      ref="mapContainer"
-      class="flex-1 relative overflow-auto bg-green-100"
-      :class="{'cursor-grab': !isPanning, 'cursor-grabbing': isPanning, 'user-select-none': isPanning}"
-    >
-      <div
-        class="relative grid map-grid"
-        :style="`grid-template-columns: repeat(${gridSize}, ${cellSize}px); grid-template-rows: repeat(${gridSize}, ${cellSize}px); width: ${gridSize * cellSize}px; height: ${gridSize * cellSize}px;`"
-      >
-        <div
-          v-for="index in totalCells"
-          :key="index"
-          :style="`width: ${cellSize}px; height: ${cellSize}px;`"
-        >
-          <div
-            v-if="isVillageCell(getCellX(index), getCellY(index))"
-            @mouseenter="showTooltip($event, getVillageAt(getCellX(index), getCellY(index)))"
-            @mouseleave="hideTooltip"
-            @click="openVillageModal(getVillageAt(getCellX(index), getCellY(index)))"
-            :class="[
-    'border border-gray-500 flex items-center justify-center cursor-pointer text-xs hover:ring-2 hover:ring-blue-300',
-    toVillageColorClass(getVillageAt(getCellX(index), getCellY(index))),
-    selectedCell.x === getCellX(index) && selectedCell.y === getCellY(index) ? 'ring-4 ring-yellow-400' : ''
-  ]"
-            :style="`width: ${cellSize}px; height: ${cellSize}px;`"
-          >
-<!--            {{ getCellX(index) }},{{ getCellY(index) }}-->
-          </div>
-          <div
-            v-else
-            class="border border-gray-300 flex items-center justify-center bg-green-200 text-xs"
-            :style="`width: ${cellSize}px; height: ${cellSize}px;`"
-          >
-<!--            {{ getCellX(index) }},{{ getCellY(index) }}-->
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-if="tooltip.show"
-        :style="`top: ${tooltip.y}px; left: ${tooltip.x}px;`"
-        class="fixed bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded z-50 pointer-events-none"
-      >
-        {{ tooltip.village.name }} ({{ tooltip.village.coordinates.x }}, {{ tooltip.village.coordinates.y }})
-      </div>
-
-      <div v-if="activeVillage"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white p-4 rounded shadow w-64">
-          <h2 class="font-bold mb-2">{{ activeVillage.name }}</h2>
-          <p class="text-sm text-gray-500">Coords: (
-            {{ activeVillage.coordinates.x }}, {{ activeVillage.coordinates.y }})
-          </p>
-          <div class="mt-4 space-y-2">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded w-full">Attack</button>
-            <button class="bg-green-500 text-white px-4 py-2 rounded w-full">Spy</button>
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded w-full">Info</button>
-          </div>
-          <button @click="closeVillageModal" class="mt-4 text-gray-600 underline w-full">Close
-          </button>
-        </div>
-      </div>
-    </main>
-
-    <!-- Floating controls (Fixed to viewport) -->
-    <div class="fixed bottom-4 right-4 flex flex-col space-y-2 z-50">
-      <button @click="zoomIn" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">+</button>
-      <button @click="zoomOut" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">-</button>
-    </div>
-
-    <!-- Mobile drawer trigger -->
-    <div class="fixed bottom-4 left-4 md:hidden z-50">
-      <button @click="showDrawer = true" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">
-        =
-      </button>
-    </div>
-
-    <!-- Mobile Drawer -->
-    <transition name="slide">
-      <div v-if="showDrawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col">
-        <div class="bg-white p-4 flex-1 overflow-y-auto">
-          <button @click="showDrawer = false" class="mb-4 text-gray-700">Close</button>
-          <h2 class="font-semibold mb-4">Your Villages</h2>
-          <ul class="space-y-2">
-            <li
-              v-for="village in villageStore.playerVillages"
-              :key="village.id"
-              @click="centerMapOnVillage(village, true)"
-              class="p-3 bg-gray-100 rounded hover:bg-blue-100 cursor-pointer"
+        <!-- Canvas -->
+        <main class="flex-1 relative overflow-hidden bg-green-200">
+            <canvas
+                ref="canvas"
+                @mousedown="onMouseDown"
+                @mousemove="onMouseMove"
+                @mouseup="onMouseUp"
+                @click="onClick"
+                class="w-full h-full"
+            />
+            <div
+                v-if="tooltip.show"
+                :style="`position: absolute; top: ${tooltip.y}px; left: ${tooltip.x}px; transform: translate(-50%, -100%)`"
+                class="bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded z-50 pointer-events-none"
             >
-              <div class="font-semibold">{{ village.name }}</div>
-              <div class="text-sm text-gray-500">Coords: ({{ village.coordinates.x }}, {{ village.coordinates.y }})</div>
-            </li>
-          </ul>
+                {{ tooltip.village?.name }} ({{ tooltip.village?.x }}, {{ tooltip.village?.y }})
+            </div>
+        </main>
+
+        <!-- Zoom buttons -->
+        <div class="fixed bottom-4 right-4 flex flex-col space-y-2 z-50">
+            <button @click="zoomIn" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">+</button>
+            <button @click="zoomOut" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">-</button>
         </div>
-      </div>
-    </transition>
-  </div>
+
+        <!-- Mobile drawer trigger -->
+        <div class="fixed bottom-4 left-4 md:hidden z-50">
+            <button @click="showDrawer = true" class="bg-white shadow rounded-full p-3 hover:bg-blue-100">=</button>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <transition name="slide">
+            <div v-if="showDrawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col">
+                <div class="bg-white p-4 flex-1 overflow-y-auto">
+                    <button @click="showDrawer = false" class="mb-4 text-gray-700">Close</button>
+                    <h2 class="font-semibold mb-4">Your Villages</h2>
+                    <ul class="space-y-2">
+                        <li
+                            v-for="village in villageStore.playerVillages"
+                            :key="village.id"
+                            @click="centerMapOnVillage(village)"
+                            class="p-3 bg-gray-100 rounded hover:bg-blue-100 cursor-pointer"
+                        >
+                            <div class="font-semibold">{{ village.name }}</div>
+                            <div class="text-sm text-gray-500">Coords: ({{ village.x }}, {{ village.y }})</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </transition>
+    </div>
 </template>
 
 <style scoped>
-.map-grid {
-  transition: all 0.2s ease-in-out;
-}
-
-.cursor-grab {
-  cursor: grab;
-}
-
-.cursor-grabbing {
-  cursor: grabbing;
-}
-
-.user-select-none {
-  user-select: none;
+canvas {
+    background-color: #bbf7d0;
 }
 </style>

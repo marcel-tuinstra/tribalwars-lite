@@ -9,6 +9,7 @@ use App\ValueObject\Building\Category as BuildingCategory;
 use App\ValueObject\Resource\Category as ResourceCategory;
 use App\Event\AttackLaunchedEvent;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BotService
@@ -19,6 +20,26 @@ class BotService
         private readonly EntityManagerInterface   $em
     )
     {
+    }
+
+    private array $tribePrefixes = ['Zan', 'Kor', 'Nok', 'Ash', 'Dar', 'Rak', 'Tal', 'Vor', 'Kel', 'Bar', 'Uld', 'Mak', 'Yar', 'Tor', 'Gur'];
+
+    private array $tribeSuffixes = ['dun', 'rak', 'mir', 'tok', 'ven', 'gar', 'lun', 'zor', 'han', 'gul', 'tam', 'vok', 'tash'];
+
+    public function createVillage(array &$taken = []): ?Village
+    {
+        $coords = $this->worldMapService->findAvailableCoordinateWithinExpandingRadius(taken: $taken);
+
+        if (!$coords) {
+            return null;
+        }
+
+        $prefix  = $this->tribePrefixes[array_rand($this->tribePrefixes)];
+        $suffix  = $this->tribeSuffixes[array_rand($this->tribeSuffixes)];
+        $village = new Village($prefix . $suffix, $coords['x'], $coords['y']);
+        $this->em->persist($village);
+
+        return $village;
     }
 
     public function processBotTurn(Village $village): void
