@@ -53,10 +53,10 @@ class BotService
     {
         $priority = [
             BuildingCategory::lumbercamp(),
-            BuildingCategory::claypit(),
-            BuildingCategory::ironmine(),
+            BuildingCategory::miningCamp(),
+            BuildingCategory::mill(),
             BuildingCategory::warehouse(),
-            BuildingCategory::farm(),
+            BuildingCategory::townCenter(),
             BuildingCategory::barracks(),
         ];
 
@@ -106,7 +106,7 @@ class BotService
     private function calculatePopulationCap(Village $village): int
     {
         $buildingCollection = new BuildingCollection($village->getBuildings()->toArray());
-        $farm               = $buildingCollection->getBuildingByCategory(BuildingCategory::farm());
+        $farm               = $buildingCollection->getBuildingByCategory(BuildingCategory::townCenter());
 
         return $farm->getLevel() * 100;
     }

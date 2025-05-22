@@ -13,15 +13,15 @@ final class Category implements ValueObjectInterface
     private const ALLOWED_TYPES
         = [
             self::WOOD,
-            self::CLAY,
-            self::IRON,
+            self::STONE,
+            self::FOOD,
             self::POPULATION
         ];
 
-    private const WOOD       = 'wood';
-    private const CLAY       = 'clay';
-    private const IRON       = 'iron';
-    private const POPULATION = 'population';
+    public const WOOD       = 'wood';
+    public const STONE      = 'stone';
+    public const FOOD       = 'food';
+    public const POPULATION = 'population';
 
     public function __construct(private readonly string $value)
     {
@@ -72,14 +72,14 @@ final class Category implements ValueObjectInterface
         return new self(self::WOOD);
     }
 
-    public static function clay(): self
+    public static function stone(): self
     {
-        return new self(self::CLAY);
+        return new self(self::STONE);
     }
 
-    public static function iron(): self
+    public static function food(): self
     {
-        return new self(self::IRON);
+        return new self(self::FOOD);
     }
 
     public static function population(): self

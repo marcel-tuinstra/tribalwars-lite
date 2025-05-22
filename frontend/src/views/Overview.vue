@@ -9,6 +9,7 @@
           <th class="text-left px-2 py-1">Village</th>
           <th class="text-left px-2 py-1">Coords</th>
           <th class="text-left px-2 py-1">Pop</th>
+          <th class="text-left px-2 py-1">Lvl</th>
         </tr>
         </thead>
         <tbody>
@@ -22,6 +23,9 @@
           <td class="px-2 py-1">({{ village.x }}, {{ village.y }})</td>
           <td class="px-2 py-1">
             {{ village.resources.find(r => r.category === 'population')?.amount ?? 'N/A' }}
+          </td>
+          <td class="px-2 py-1">
+            {{ village.level }}
           </td>
         </tr>
         </tbody>

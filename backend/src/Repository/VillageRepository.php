@@ -42,6 +42,7 @@ class VillageRepository extends ServiceEntityRepository
             ->select(sprintf('%s.id', self::ALIAS))
             ->addSelect(sprintf('%s.x', self::ALIAS))
             ->addSelect(sprintf('%s.y', self::ALIAS))
+            ->addSelect(sprintf('%s.level', self::ALIAS))
             ->leftJoin(sprintf('%s.player', self::ALIAS), 'p')
             ->addSelect('p.id AS playerId')
             ->addSelect(sprintf('%s.name', self::ALIAS));

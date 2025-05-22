@@ -59,6 +59,9 @@ class Village implements IdentifiableInterface, TimestampableInterface
     #[ORM\OneToMany(targetEntity: Troop::class, mappedBy: 'village', cascade: ['persist'])]
     private Collection $troops;
 
+    #[ORM\Column]
+    private int $level = 1;
+
     public function __construct(string $name, int $x, int $y)
     {
         $this->name = $name;
@@ -69,6 +72,10 @@ class Village implements IdentifiableInterface, TimestampableInterface
         $this->buildings = new ArrayCollection();
         foreach (BuildingCategory::getValuesAsObjects() as $category) {
             $building = new Building($this, $category);
+            if (in_array($category, BuildingCategory::getDefaultBuildings())) {
+                $building->setLevel(1);
+            }
+
             $this->addBuilding($building);
         }
 
@@ -110,6 +117,11 @@ class Village implements IdentifiableInterface, TimestampableInterface
         return $this->y;
     }
 
+    public function getLevel(): int
+    {
+        return $this->level;
+    }
+
     public function getPlayer(): ?Player
     {
         return $this->player;
@@ -145,6 +157,13 @@ class Village implements IdentifiableInterface, TimestampableInterface
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function setLevel(int $level): static
+    {
+        $this->level = max(1, min(6, $level));
 
         return $this;
     }

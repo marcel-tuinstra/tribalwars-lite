@@ -18,6 +18,7 @@ class VillageNormalizer implements NormalizerInterface
             'name'      => $data->getName(),
             'x'         => $data->getX(),
             'y'         => $data->getY(),
+            'level'     => $data->getLevel(),
             'resources' => array_map(fn($resource) => [
                 'category' => $resource->getCategory()->value(),
                 'amount'   => $resource->getAmount(),

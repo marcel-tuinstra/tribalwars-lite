@@ -16,15 +16,15 @@ class ResourceService
         $buildingCollection = new BuildingCollection($village->getBuildings()->toArray());
 
         $productionRates = [
-            ResourceCategory::wood()->value() => 5,
-            ResourceCategory::clay()->value() => 4,
-            ResourceCategory::iron()->value() => 3,
+            ResourceCategory::wood()->value()  => 5,
+            ResourceCategory::stone()->value() => 4,
+            ResourceCategory::food()->value()  => 3,
         ];
 
         $resourceToBuildingCategory = [
-            ResourceCategory::wood()->value() => BuildingCategory::lumberCamp(),
-            ResourceCategory::clay()->value() => BuildingCategory::clayPit(),
-            ResourceCategory::iron()->value() => BuildingCategory::ironMine(),
+            ResourceCategory::wood()->value()  => BuildingCategory::lumberCamp(),
+            ResourceCategory::stone()->value() => BuildingCategory::miningCamp(),
+            ResourceCategory::food()->value()  => BuildingCategory::mill(),
         ];
 
         /** @var Resource $resource */
@@ -36,17 +36,23 @@ class ResourceService
                 continue;
             }
 
-            $building = $buildingCollection->getBuildingByCategory($buildingCategory);
+            $building   = $buildingCollection->getBuildingByCategory($buildingCategory);
             $efficiency = 1 + ($building->getLevel() * 0.05);
             $production = $baseRate * $building->getLevel() * $efficiency;
 
             $resource->increaseAmount($production);
 
-            // Cap resource amount to warehouse capacity
+            // Cap only wood, stone, and food based on warehouse capacity
             $warehouseCap = $this->getWarehouseCap($village);
 
-            if ($resource->getAmount() > $warehouseCap) {
-                $resource->setAmount($warehouseCap);
+            if (in_array($resource->getCategory()->value(), [
+                ResourceCategory::wood()->value(),
+                ResourceCategory::stone()->value(),
+                ResourceCategory::food()->value(),
+            ], true)) {
+                if ($resource->getAmount() > $warehouseCap) {
+                    $resource->setAmount($warehouseCap);
+                }
             }
         }
     }
@@ -55,34 +61,34 @@ class ResourceService
     {
         $baseCosts = [
             BuildingCategory::lumberCamp()->value() => [
-                ResourceCategory::wood()->value() => 100,
-                ResourceCategory::clay()->value() => 50,
-                ResourceCategory::iron()->value() => 30
+                ResourceCategory::wood()->value()  => 100,
+                ResourceCategory::stone()->value() => 40,
+                ResourceCategory::food()->value()  => 20,
             ],
-            BuildingCategory::clayPit()->value()    => [
-                ResourceCategory::wood()->value() => 80,
-                ResourceCategory::clay()->value() => 80,
-                ResourceCategory::iron()->value() => 40
+            BuildingCategory::miningCamp()->value() => [
+                ResourceCategory::wood()->value()  => 80,
+                ResourceCategory::stone()->value() => 80,
+                ResourceCategory::food()->value()  => 20,
             ],
-            BuildingCategory::ironMine()->value()   => [
-                ResourceCategory::wood()->value() => 70,
-                ResourceCategory::clay()->value() => 60,
-                ResourceCategory::iron()->value() => 100
+            BuildingCategory::mill()->value() => [
+                ResourceCategory::wood()->value()  => 60,
+                ResourceCategory::stone()->value() => 30,
+                ResourceCategory::food()->value()  => 100,
             ],
-            BuildingCategory::barracks()->value()   => [
-                ResourceCategory::wood()->value() => 200,
-                ResourceCategory::clay()->value() => 150,
-                ResourceCategory::iron()->value() => 100
+            BuildingCategory::barracks()->value() => [
+                ResourceCategory::wood()->value()  => 150,
+                ResourceCategory::stone()->value() => 150,
+                ResourceCategory::food()->value()  => 150,
             ],
-            BuildingCategory::farm()->value()       => [
-                ResourceCategory::wood()->value() => 50,
-                ResourceCategory::clay()->value() => 50,
-                ResourceCategory::iron()->value() => 20
+            BuildingCategory::townCenter()->value() => [
+                ResourceCategory::wood()->value()  => 120,
+                ResourceCategory::stone()->value() => 100,
+                ResourceCategory::food()->value()  => 80,
             ],
-            BuildingCategory::warehouse()->value()  => [
-                ResourceCategory::wood()->value() => 120,
-                ResourceCategory::clay()->value() => 100,
-                ResourceCategory::iron()->value() => 50
+            BuildingCategory::warehouse()->value() => [
+                ResourceCategory::wood()->value()  => 100,
+                ResourceCategory::stone()->value() => 60,
+                ResourceCategory::food()->value()  => 40,
             ],
         ];
 
@@ -101,20 +107,45 @@ class ResourceService
     public function calculateTroopTrainingCost(Role $role, int $amount): array
     {
         $unitCosts = [
-            Role::spearman()->value()  => [
-                ResourceCategory::wood()->value() => 50,
-                ResourceCategory::clay()->value() => 30,
-                ResourceCategory::iron()->value() => 20
-            ],
-            Role::swordsman()->value() => [
-                ResourceCategory::wood()->value() => 30,
-                ResourceCategory::clay()->value() => 50,
-                ResourceCategory::iron()->value() => 40
+            Role::militia()->value()   => [
+                ResourceCategory::wood()->value()  => 40,
+                ResourceCategory::stone()->value() => 30,
+                ResourceCategory::food()->value()  => 20
             ],
             Role::scout()->value()     => [
-                ResourceCategory::wood()->value() => 80,
-                ResourceCategory::clay()->value() => 60,
-                ResourceCategory::iron()->value() => 40
+                ResourceCategory::wood()->value()  => 80,
+                ResourceCategory::stone()->value() => 60,
+                ResourceCategory::food()->value()  => 40
+            ],
+            Role::spearman()->value()  => [
+                ResourceCategory::wood()->value()  => 50,
+                ResourceCategory::stone()->value() => 30,
+                ResourceCategory::food()->value()  => 20
+            ],
+            Role::swordsman()->value() => [
+                ResourceCategory::wood()->value()  => 30,
+                ResourceCategory::stone()->value() => 50,
+                ResourceCategory::food()->value()  => 40
+            ],
+            Role::archer()->value()    => [
+                ResourceCategory::wood()->value()  => 70,
+                ResourceCategory::stone()->value() => 40,
+                ResourceCategory::food()->value()  => 30
+            ],
+            Role::raider()->value()    => [
+                ResourceCategory::wood()->value()  => 60,
+                ResourceCategory::stone()->value() => 40,
+                ResourceCategory::food()->value()  => 40
+            ],
+            Role::cavalry()->value()   => [
+                ResourceCategory::wood()->value()  => 100,
+                ResourceCategory::stone()->value() => 80,
+                ResourceCategory::food()->value()  => 100
+            ],
+            Role::longbowman()->value() => [
+                ResourceCategory::wood()->value()  => 120,
+                ResourceCategory::stone()->value() => 60,
+                ResourceCategory::food()->value()  => 80
             ],
         ];
 
@@ -139,7 +170,7 @@ class ResourceService
     public function getFarmCap(Village $village): int
     {
         $buildingCollection = new BuildingCollection($village->getBuildings()->toArray());
-        $farm               = $buildingCollection->getBuildingByCategory(BuildingCategory::farm());
+        $farm               = $buildingCollection->getBuildingByCategory(BuildingCategory::townCenter());
 
         return $farm->getLevel() * 100;
     }

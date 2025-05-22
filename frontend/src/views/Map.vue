@@ -9,16 +9,32 @@ const auth = useAuthStore();
 const villageStore = useVillageStore()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
-const cellSize = ref(25)
+const cellSize = ref(60)
 const gridSize = 200
 const canvasSize = ref(gridSize * cellSize.value)
 
 let ctx: CanvasRenderingContext2D | null = null
+
+const imageCache: Record<string, HTMLImageElement> = {}
+
+const terrainMap: Record<string, string> = {}
+
+function getCachedImage(src: string): HTMLImageElement {
+    if (!imageCache[src]) {
+        const img = new Image()
+        img.src = src
+        imageCache[src] = img
+    }
+    return imageCache[src]
+}
+
 let isDragging = false
 let offsetX = 0
 let offsetY = 0
 let dragStartX = 0
 let dragStartY = 0
+
+let lastHoverVillageId: number | null = null
 
 const showDrawer = ref(false)
 
@@ -39,7 +55,22 @@ function draw() {
     ctx.clearRect(0, 0, width, height)
 
     ctx.save()
-    ctx.fillStyle = '#64a30d' // Tailwind green-100
+    let fillColor = '#64a30d' // Default green
+
+    if (villageStore.villages.length) {
+        const playerVillage = villageStore.villages.find(v => v.playerId === auth.user?.id)
+        const enemyVillage = villageStore.villages.find(v => v.playerId && v.playerId !== auth.user?.id)
+
+        if (playerVillage) {
+            fillColor = '#facc15' // Tailwind yellow-100 for own territory
+        } else if (enemyVillage) {
+            fillColor = '#713e12' // Tailwind red-100 for enemy territory
+        } else {
+            fillColor = '#a3a3a3' // Tailwind green-50 for barbarian only
+        }
+    }
+
+    ctx.fillStyle = fillColor
     ctx.fillRect(offsetX, offsetY, gridSize * cellSize.value, gridSize * cellSize.value)
     ctx.strokeStyle = '#3f6212'
     ctx.lineWidth = 1
@@ -63,7 +94,43 @@ function draw() {
             ctx.stroke()
         }
     }
+
     ctx.restore()
+
+    // Build a lookup for village positions
+    const occupied = new Set(villageStore.villages.map(v => `${v.x},${v.y}`))
+
+    // Draw grass or forest in empty cells
+    for (let x = 1; x <= gridSize; x++) {
+        for (let y = 1; y <= gridSize; y++) {
+            if (occupied.has(`${x},${y}`)) continue
+
+            const drawX = (x - 1) * cellSize.value + offsetX
+            const drawY = (y - 1) * cellSize.value + offsetY
+
+            if (
+                drawX + cellSize.value < 0 || drawX > canvas.value!.width ||
+                drawY + cellSize.value < 0 || drawY > canvas.value!.height
+            ) continue
+
+            const key = `${x},${y}`
+            if (!terrainMap[key]) {
+                const randomGrassTile = Math.floor(Math.random() * 4) + 1;
+                terrainMap[key] = Math.random() < 0.8
+                    ? `/images/map/grass_${randomGrassTile}.png`
+                    : '/images/map/forest_01.png'
+            }
+            const imgSrc = terrainMap[key]
+            const img = getCachedImage(imgSrc)
+            if (img.complete) {
+                ctx.drawImage(img, drawX, drawY, cellSize.value, cellSize.value)
+            } else {
+                img.onload = () => {
+                    draw()
+                }
+            }
+        }
+    }
 
     for (const village of villageStore.villages) {
         const {x, y} = village
@@ -75,19 +142,53 @@ function draw() {
         ) continue
 
         ctx.save()
-        if (!village.playerId) {
-            ctx.fillStyle = '#a3a3a3'
+        const imgSrc = !village.playerId
+            ? `/images/map/barbarian_village_${village.level}.png`
+            : `/images/map/player_village_${village.level}.png`
+        const img = getCachedImage(imgSrc)
+        if (img.complete) {
+            ctx.drawImage(img, drawX, drawY, cellSize.value, cellSize.value)
         } else {
-            ctx.fillStyle = village.playerId === auth.user.id ? '#facc15' : '#713e12'
-        }
-        const padding = cellSize.value * 0.15
-        ctx.fillRect(drawX + padding, drawY + padding, cellSize.value * 0.7, cellSize.value * 0.7)
-        if (hoverVillage.value && hoverVillage.value.id === village.id) {
-            ctx.strokeStyle = '#000000'
-            ctx.lineWidth = 5
-            ctx.strokeRect(drawX + padding, drawY + padding, cellSize.value * 0.7, cellSize.value * 0.7)
+            img.onload = () => {
+                draw()
+            }
         }
         ctx.restore()
+    }
+
+    // Draw top-left cell and labels after everything else
+    ctx.save()
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, cellSize.value, cellSize.value)
+    ctx.restore()
+
+    for (let i = 0; i < gridSize; i++) {
+        const gx = i * cellSize.value + offsetX
+        const gy = i * cellSize.value + offsetY
+
+        if (gx >= 0 && gx <= width) {
+            ctx.save()
+            ctx.fillStyle = 'white'
+            ctx.fillRect(gx, 0, cellSize.value, cellSize.value)
+            ctx.fillStyle = '#1e293b'
+            ctx.font = '12px sans-serif'
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+            ctx.fillText((i + 1).toString(), gx + cellSize.value / 2, cellSize.value / 2)
+            ctx.restore()
+        }
+
+        if (gy >= 0 && gy <= height) {
+            ctx.save()
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0, gy, cellSize.value, cellSize.value)
+            ctx.fillStyle = '#1e293b'
+            ctx.font = '12px sans-serif'
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+            ctx.fillText((i + 1).toString(), cellSize.value / 2, gy + cellSize.value / 2)
+            ctx.restore()
+        }
     }
 }
 
@@ -124,18 +225,24 @@ function onMouseMove(e: MouseEvent) {
             draw()
         }
     } else if (village) {
-        hoverVillage.value = village
-        tooltip.value = {
-            show: true,
-            x: (village.x - 1) * cellSize.value + offsetX + cellSize.value / 2,
-            y: (village.y - 1) * cellSize.value + offsetY - 10,
-            village
+        if (lastHoverVillageId !== village.id) {
+            lastHoverVillageId = village.id
+            hoverVillage.value = village
+            tooltip.value = {
+                show: true,
+                x: (village.x - 1) * cellSize.value + offsetX + cellSize.value / 2,
+                y: (village.y - 1) * cellSize.value + offsetY - 10,
+                village
+            }
+            draw()
         }
-        draw()
     } else {
-        hoverVillage.value = null
-        tooltip.value.show = false
-        draw()
+        if (lastHoverVillageId !== null) {
+            lastHoverVillageId = null
+            hoverVillage.value = null
+            tooltip.value.show = false
+            draw()
+        }
     }
 }
 
@@ -144,15 +251,23 @@ function onMouseUp() {
 }
 
 function zoomIn() {
-    if (cellSize.value < 50) {
-        cellSize.value += 5
+    if (cellSize.value < 60) {
+        const centerX = (canvas.value!.clientWidth / 2 - offsetX) / cellSize.value
+        const centerY = (canvas.value!.clientHeight / 2 - offsetY) / cellSize.value
+        cellSize.value += 15
+        offsetX = canvas.value!.clientWidth / 2 - centerX * cellSize.value
+        offsetY = canvas.value!.clientHeight / 2 - centerY * cellSize.value
         updateCanvasSize()
     }
 }
 
 function zoomOut() {
-    if (cellSize.value > 10) {
-        cellSize.value -= 5
+    if (cellSize.value > 30) {
+        const centerX = (canvas.value!.clientWidth / 2 - offsetX) / cellSize.value
+        const centerY = (canvas.value!.clientHeight / 2 - offsetY) / cellSize.value
+        cellSize.value -= 15
+        offsetX = canvas.value!.clientWidth / 2 - centerX * cellSize.value
+        offsetY = canvas.value!.clientHeight / 2 - centerY * cellSize.value
         updateCanvasSize()
     }
 }

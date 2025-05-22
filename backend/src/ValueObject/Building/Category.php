@@ -12,19 +12,19 @@ final class Category implements ValueObjectInterface
 
     private const ALLOWED_TYPES
         = [
-            self::LUMBER_CAMP,
-            self::CLAY_PIT,
-            self::IRON_MINE,
-            self::BARRACKS,
-            self::FARM,
-            self::WAREHOUSE
+            self::TOWN_CENTER, // population
+            self::LUMBER_CAMP, // wood
+            self::MINING_CAMP, // stone
+            self::MILL, // food
+            self::BARRACKS, // unit roles
+            self::WAREHOUSE // amount of resource
         ];
 
+    private const TOWN_CENTER = 'town_center';
     private const LUMBER_CAMP = 'lumber_camp';
-    private const CLAY_PIT    = 'clay_pit';
-    private const IRON_MINE   = 'iron_mine';
+    private const MINING_CAMP = 'mining_camp';
+    private const MILL        = 'mill';
     private const BARRACKS    = 'barracks';
-    private const FARM        = 'farm';
     private const WAREHOUSE   = 'warehouse';
 
     public function __construct(private readonly string $value)
@@ -63,32 +63,37 @@ final class Category implements ValueObjectInterface
         return $values;
     }
 
+    public static function getDefaultBuildings(): array
+    {
+        return array_diff(self::getValuesAsObjects(), [self::barracks(), self::warehouse()]);
+    }
+
     // Creators
     //////////////////////////////
+
+    public static function townCenter(): self
+    {
+        return new self(self::TOWN_CENTER);
+    }
 
     public static function lumberCamp(): self
     {
         return new self(self::LUMBER_CAMP);
     }
 
-    public static function clayPit(): self
+    public static function miningCamp(): self
     {
-        return new self(self::CLAY_PIT);
+        return new self(self::MINING_CAMP);
     }
 
-    public static function ironMine(): self
+    public static function mill(): self
     {
-        return new self(self::IRON_MINE);
+        return new self(self::MILL);
     }
 
     public static function barracks(): self
     {
         return new self(self::BARRACKS);
-    }
-
-    public static function farm(): self
-    {
-        return new self(self::FARM);
     }
 
     public static function warehouse(): self

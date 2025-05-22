@@ -26,7 +26,7 @@ class Resource implements IdentifiableInterface, TimestampableInterface
     private Category $category;
 
     #[ORM\Column]
-    private int $amount = 0;
+    private int $amount;
 
     #[ORM\ManyToOne(inversedBy: 'resources')]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,6 +36,14 @@ class Resource implements IdentifiableInterface, TimestampableInterface
     {
         $this->village  = $village;
         $this->category = $category;
+
+        // DEFAULTS
+        $this->amount = match ($category->value()) {
+            Category::WOOD => 300,
+            Category::STONE => 250,
+            Category::FOOD => 150,
+            Category::POPULATION => 100,
+        };
     }
 
     // Getters

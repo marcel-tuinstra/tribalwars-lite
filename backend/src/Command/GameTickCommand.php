@@ -12,8 +12,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:game:tick',
-    description: 'Add a short description for your command',
+    description: 'Processes all villages: resource generation, training, upgrades, and bot turns.',
 )]
+/**
+ * Runs the main game tick.
+ *
+ * Cron example (every minute):
+ * * * * * cd /path/to/project && php bin/console app:game:tick > /dev/null 2>&1
+ */
 class GameTickCommand extends Command
 {
     public function __construct(
