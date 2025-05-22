@@ -4,27 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95508806-f5eb-4660-adfb-1ef50c01174e" name="Changes" comment="[FE] Basic Overview and Map pages with api data.">
-      <change afterPath="$PROJECT_DIR$/backend/generate-bots.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/Collection/VillageCollection.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/Command/GameBotsGenerateCommand.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/views/Map_div.vue" afterDir="false" />
+    <list default="true" id="95508806-f5eb-4660-adfb-1ef50c01174e" name="Changes" comment="Shit ton of optimizations, to many to name.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Controller/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Controller/ApiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Controller/VillageController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Controller/VillageController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/DataFixtures/VillageFixtures.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Entity/Village.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Entity/Village.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Repository/VillageRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Repository/VillageRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Serializer/Normalizer/VillageNormalizer.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Serializer/Normalizer/VillageNormalizer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Service/BotService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Service/BotService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Service/PlayerService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Service/PlayerService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/Service/WorldMapService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Service/WorldMapService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Login.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/Map.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Map.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Map_old.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Overview.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Overview.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,7 +212,7 @@
       <updated>1747252347529</updated>
       <workItem from="1747252348552" duration="41633000" />
       <workItem from="1747343838171" duration="657000" />
-      <workItem from="1747401557596" duration="38062000" />
+      <workItem from="1747401557596" duration="44514000" />
     </task>
     <task id="LOCAL-00001" summary="[BE] Initial Commit&#10;[Docker] Initial Commit&#10;[FE] Initial Commit">
       <option name="closed" value="true" />
@@ -271,7 +254,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747433146286</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Shit ton of optimizations, to many to name.">
+      <option name="closed" value="true" />
+      <created>1747779246591</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1747779246591</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,6 +285,7 @@
     <MESSAGE value="[BE] More Commit" />
     <MESSAGE value="[BE] More BE" />
     <MESSAGE value="[FE] Basic Overview and Map pages with api data." />
-    <option name="LAST_COMMIT_MESSAGE" value="[FE] Basic Overview and Map pages with api data." />
+    <MESSAGE value="Shit ton of optimizations, to many to name." />
+    <option name="LAST_COMMIT_MESSAGE" value="Shit ton of optimizations, to many to name." />
   </component>
 </project>

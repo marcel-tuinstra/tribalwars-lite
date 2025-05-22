@@ -9,7 +9,7 @@ use App\Repository\VillageRepository;
 
 class WorldMapService
 {
-    public const GRID = '100';
+    public const GRID = '200';
 
     public function __construct(private readonly VillageRepository $villageRepository)
     {
@@ -54,7 +54,7 @@ class WorldMapService
         int $step = 5,
         int $triesPerRadius = 10,
         array &$taken = [],
-        float $fillDensity = 0.6
+        float $fillDensity = 0.4
     ): ?array {
         if (empty($taken)) {
             $coordsRaw = $this->villageRepository->findAllVillageCoordinates();
