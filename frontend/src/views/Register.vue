@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const name = ref('')
@@ -13,7 +13,6 @@ const confirmDirty = ref(false)
 const showPassword = ref(false)
 const showPasswordConfirm = ref(false)
 const isLoading = ref(false)
-const router = useRouter()
 const auth = useAuthStore()
 
 const passwordsMatch = computed(() => password.value === passwordConfirm.value)

@@ -14,14 +14,12 @@ final class Category implements ValueObjectInterface
         = [
             self::WOOD,
             self::STONE,
-            self::FOOD,
-            self::POPULATION
+            self::FOOD
         ];
 
     public const WOOD       = 'wood';
     public const STONE      = 'stone';
     public const FOOD       = 'food';
-    public const POPULATION = 'population';
 
     public function __construct(private readonly string $value)
     {
@@ -80,10 +78,5 @@ final class Category implements ValueObjectInterface
     public static function food(): self
     {
         return new self(self::FOOD);
-    }
-
-    public static function population(): self
-    {
-        return new self(self::POPULATION);
     }
 }

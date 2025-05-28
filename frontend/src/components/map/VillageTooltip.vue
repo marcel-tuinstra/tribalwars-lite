@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {defineProps} from "vue";
-import type { Village } from '@/types/village'
 import {resourceToName} from "@/utils/village.ts";
 
-const props = defineProps({
+defineProps({
   village: {
     type: Object,
     required: true

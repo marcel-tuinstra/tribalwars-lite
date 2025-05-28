@@ -72,10 +72,6 @@ class Village implements IdentifiableInterface, TimestampableInterface
         $this->buildings = new ArrayCollection();
         foreach (BuildingCategory::getValuesAsObjects() as $category) {
             $building = new Building($this, $category);
-            if (in_array($category, BuildingCategory::getDefaultBuildings())) {
-                $building->setLevel(1);
-            }
-
             $this->addBuilding($building);
         }
 

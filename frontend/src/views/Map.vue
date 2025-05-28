@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useVillageStore } from '@/stores/village'
 import type { Village } from '@/types/village'
 import { useAuthStore } from '@/stores/auth.ts'

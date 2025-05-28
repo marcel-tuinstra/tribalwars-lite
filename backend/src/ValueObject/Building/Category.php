@@ -63,11 +63,6 @@ final class Category implements ValueObjectInterface
         return $values;
     }
 
-    public static function getDefaultBuildings(): array
-    {
-        return array_diff(self::getValuesAsObjects(), [self::barracks(), self::warehouse()]);
-    }
-
     // Creators
     //////////////////////////////
 

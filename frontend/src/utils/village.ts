@@ -1,5 +1,5 @@
 export type BuildingType = 'lumber_camp' | 'clay_pit' | 'iron_mine' | 'barracks' | 'farm' | 'warehouse' | 'hq'
-export type ResourceType = 'wood' | 'stone' | 'food' | 'population'
+export type ResourceType = 'wood' | 'stone' | 'food'
 
 export function buildingToName(type: BuildingType) {
   const map: Record<BuildingType, string> = {
@@ -19,9 +19,18 @@ export function resourceToName(resource: ResourceType): string {
   const map: Record<ResourceType, string> = {
     wood: 'Wood',
     stone: 'Stone',
-    food: 'Food',
-    population: 'Population',
+    food: 'Food'
   }
 
   return map[resource]
+}
+
+
+export function buildingToCap(type: BuildingType): string {
+  const map: Record<BuildingType, string> = {
+    population: 'Population',
+    storage: 'Storage',
+  }
+
+  return map[type]
 }

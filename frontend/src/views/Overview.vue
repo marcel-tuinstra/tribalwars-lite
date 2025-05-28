@@ -2,7 +2,6 @@
 import { onMounted, ref, watchEffect } from 'vue'
 import VillageMap from '@/components/overview/VillageMap.vue'
 import { useVillageStore } from '@/stores/village'
-import { useAuthStore } from '@/stores/auth'
 import VillageListItem from '@/components/map/VillageListItem.vue'
 import MenuSide from '@/components/MenuSide.vue'
 import { buildingToName } from '@/utils/village.ts'
@@ -62,11 +61,21 @@ function onBuildingClick(building) {
           <!-- Info panel -->
           <div class="bg-white rounded shadow p-4 flex-1 space-y-4">
             <div>
+              <h3 class="font-semibold mb-2">Buildings</h3>
+              <ul class="space-y-1">
+                <li v-for="building in selectedVillage.buildings">
+                  {{ building.category }}:
+                  {{ building.level }}
+                </li>
+              </ul>
+            </div>
+            <div>
               <h3 class="font-semibold mb-2">Resources</h3>
               <ul class="space-y-1">
                 <li v-for="resource in selectedVillage.resources">
                   {{ resource.category }}:
                   {{ resource.amount }}
+                  ({{ resource.pph }} Every Hour)
                 </li>
               </ul>
             </div>

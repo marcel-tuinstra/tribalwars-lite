@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use App\Collection\BuildingCollection;
 use App\Entity\Interface\IdentifiableInterface;
 use App\Entity\Interface\TimestampableInterface;
 use App\Entity\Trait\EqualsTrait;
 use App\Entity\Trait\TimestampableTrait;
 use App\Repository\ResourceRepository;
+use App\ValueObject\Building\Category as BuildingCategory;
 use App\ValueObject\Resource\Category;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,7 +28,7 @@ class Resource implements IdentifiableInterface, TimestampableInterface
     private Category $category;
 
     #[ORM\Column]
-    private int $amount;
+    private int $amount = 250;
 
     #[ORM\ManyToOne(inversedBy: 'resources')]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,14 +38,6 @@ class Resource implements IdentifiableInterface, TimestampableInterface
     {
         $this->village  = $village;
         $this->category = $category;
-
-        // DEFAULTS
-        $this->amount = match ($category->value()) {
-            Category::WOOD => 300,
-            Category::STONE => 250,
-            Category::FOOD => 150,
-            Category::POPULATION => 100,
-        };
     }
 
     // Getters
@@ -90,5 +84,19 @@ class Resource implements IdentifiableInterface, TimestampableInterface
     public function increaseAmount(int $amount): void
     {
         $this->amount += $amount;
+    }
+
+    // Derived Methods
+    //////////////////////////////
+
+    public function getResponsibleBuilding(): Building
+    {
+        $buildingCollection = new BuildingCollection($this->village->getBuildings()->toArray());
+
+        return match ($this->category->value()) {
+            Category::WOOD => $buildingCollection->getBuildingByCategory(BuildingCategory::lumberCamp()),
+            Category::STONE => $buildingCollection->getBuildingByCategory(BuildingCategory::miningCamp()),
+            Category::FOOD => $buildingCollection->getBuildingByCategory(BuildingCategory::mill()),
+        };
     }
 }

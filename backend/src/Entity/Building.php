@@ -27,7 +27,7 @@ class Building implements IdentifiableInterface, TimestampableInterface
     private Category $category;
 
     #[ORM\Column]
-    private int $level = 0;
+    private int $level = 1;
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $upgradeFinishAt = null;

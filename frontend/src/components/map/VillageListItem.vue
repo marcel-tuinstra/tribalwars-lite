@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import {defineEmits, defineProps} from "vue";
-import type { Village } from '@/types/village'
-
-import {resourceToName} from "@/utils/village.ts";
-import { PhWarning, PhSword, PhShield, PhLog, PhCube, PhBread, PhUsersThree } from '@phosphor-icons/vue'
+import {buildingToCap, resourceToName} from "@/utils/village.ts";
+import { PhWarning, PhLog, PhCube, PhBread, PhUsersThree, PhWarehouse } from '@phosphor-icons/vue'
 
 const props = defineProps({
   village: {
@@ -54,23 +52,18 @@ function handleListClick() {
       </div>
     </div>
 
-    <div class="flex justify-between mt-2 text-xs text-base-content">
-      <div class="flex gap-3 items-center">
-        <div class="flex gap-1 tooltip" data-tip="Attack Power">
-          <PhSword :size="18" weight="duotone"/> {{ village.counters.troopAttackPower }}
-        </div>
-        <div class="flex gap-1 tooltip" data-tip="Defense Power">
-          <PhShield :size="18" weight="duotone"/> {{ village.counters.troopDefensePower }}
-        </div>
+    <div class="flex justify-between gap-3 mt-2 items-center text-xs text-base-content">
+      <div v-for="resource in village.resources" :key="resource.category" class="flex gap-1 tooltip" :data-tip="resourceToName(resource.category)">
+        <PhLog :size="18" weight="duotone" v-if="resource.category === 'wood'"/>
+        <PhCube :size="18" weight="duotone" v-if="resource.category === 'stone'"/>
+        <PhBread :size="18" weight="duotone" v-if="resource.category === 'food'"/>
+        <span>{{ resource.amount }}</span>
       </div>
-      <div class="flex gap-3">
-        <div v-for="resource in village.resources" :key="resource.category" class="flex gap-1 tooltip" :data-tip="resourceToName(resource.category)">
-          <PhLog :size="18" weight="duotone" v-if="resource.category === 'wood'"/>
-          <PhCube :size="18" weight="duotone" v-if="resource.category === 'stone'"/>
-          <PhBread :size="18" weight="duotone" v-if="resource.category === 'food'"/>
-          <PhUsersThree :size="18" weight="duotone" v-if="resource.category === 'population'"/>
-          <span>{{ resource.amount }}</span>
-        </div>
+      <div v-for="(cap, key) in village.caps" :key="key" class="flex gap-1 tooltip" :data-tip="buildingToCap(key)">
+        <PhWarehouse :size="18" weight="duotone" v-if="key === 'storage'"/>
+        <PhUsersThree :size="18" weight="duotone" v-if="key === 'population'"/>
+        <span v-if="key === 'population'">{{ village.counters.population }} /</span>
+        <span>{{ cap }}</span>
       </div>
     </div>
   </li>

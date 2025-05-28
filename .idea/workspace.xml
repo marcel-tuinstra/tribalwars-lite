@@ -4,67 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95508806-f5eb-4660-adfb-1ef50c01174e" name="Changes" comment="Front-end ton of optimizations to the Map.">
-      <change afterPath="$PROJECT_DIR$/backend/src/Command/VillageTransferCommand.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/android-chrome-192x192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/android-chrome-512x512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/apple-touch-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/favicon-16x16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/favicon-32x32.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/map/forest.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/map/sea.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/site.webmanifest" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/bread.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/cube.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/log.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/shield-checkered.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/sword.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/users-three.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/assets/images/icons/warning.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/MenuDock.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/MenuSide.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/map/VillageListItem.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/map/VillageTooltip.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/utils/village.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/views/Register.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="95508806-f5eb-4660-adfb-1ef50c01174e" name="Changes" comment="Colors, Styling, Login Page, Register Page, Icons.&#10;&#10;You name it, I build it ;)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/generate-bots.sh" beforeDir="false" afterPath="$PROJECT_DIR$/backend/generate-bots.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Controller/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Controller/ApiController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Entity/Player.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Entity/Player.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Repository/PlayerRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Repository/PlayerRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/Entity/Building.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Entity/Building.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/Entity/Resource.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Entity/Resource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/Entity/Village.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Entity/Village.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/Serializer/Normalizer/VillageNormalizer.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Serializer/Normalizer/VillageNormalizer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/Service/PlayerService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Service/PlayerService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_5.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/barbarian_village_6.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/forest_01.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/grass_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/grass_1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/grass_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/grass_2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/grass_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/grass_3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/grass_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/grass_4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_5.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_5.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/images/map/player_village_6.png" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/images/map/player_village_6.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assets/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/stores/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/stores/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/Service/ResourceService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/Service/ResourceService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/ValueObject/Building/Category.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/ValueObject/Building/Category.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/ValueObject/Resource/Category.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/ValueObject/Resource/Category.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/map/VillageListItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/map/VillageListItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/map/VillageTooltip.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/map/VillageTooltip.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/utils/village.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/utils/village.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/Map.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Map.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/views/Overview.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Overview.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Register.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,33 +170,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/marceltuinstra/Projects/tribalwars-lite/frontend/src/components",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "php.override.implement.member.chooser.php.doc": "NONE",
-    "prettierjs.PrettierConfiguration.Package": "/Users/marceltuinstra/Projects/tribalwars-lite/frontend/node_modules/prettier",
-    "settings.editor.selected.configurable": "preferences.sourceCode",
-    "ts.external.directory.path": "/Users/marceltuinstra/Projects/tribalwars-lite/frontend/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/marceltuinstra/Projects/tribalwars-lite/frontend/src/components&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;php.override.implement.member.chooser.php.doc&quot;: &quot;NONE&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/marceltuinstra/Projects/tribalwars-lite/frontend/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/marceltuinstra/Projects/tribalwars-lite/frontend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "vue.recent.templates": [
-      "Vue Composition API Component"
+  &quot;keyToStringList&quot;: {
+    &quot;vue.recent.templates&quot;: [
+      &quot;Vue Composition API Component&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/frontend/src/components" />
@@ -279,7 +233,8 @@
       <workItem from="1747343838171" duration="657000" />
       <workItem from="1747401557596" duration="54814000" />
       <workItem from="1748014057116" duration="17178000" />
-      <workItem from="1748373978224" duration="30363000" />
+      <workItem from="1748373978224" duration="30629000" />
+      <workItem from="1748459708944" duration="8317000" />
     </task>
     <task id="LOCAL-00001" summary="[BE] Initial Commit&#10;[Docker] Initial Commit&#10;[FE] Initial Commit">
       <option name="closed" value="true" />
@@ -337,7 +292,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747916915267</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Colors, Styling, Login Page, Register Page, Icons.&#10;&#10;You name it, I build it ;)">
+      <option name="closed" value="true" />
+      <created>1748451191335</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1748451191335</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -362,7 +325,8 @@
     <MESSAGE value="[FE] Basic Overview and Map pages with api data." />
     <MESSAGE value="Shit ton of optimizations, to many to name." />
     <MESSAGE value="Front-end ton of optimizations to the Map." />
-    <option name="LAST_COMMIT_MESSAGE" value="Front-end ton of optimizations to the Map." />
+    <MESSAGE value="Colors, Styling, Login Page, Register Page, Icons.&#10;&#10;You name it, I build it ;)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Colors, Styling, Login Page, Register Page, Icons.&#10;&#10;You name it, I build it ;)" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

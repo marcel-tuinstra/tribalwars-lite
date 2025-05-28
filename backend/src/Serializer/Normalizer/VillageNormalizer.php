@@ -3,16 +3,22 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Village;
+use App\Service\ResourceService;
 use DateTimeInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class VillageNormalizer implements NormalizerInterface
 {
+    public function __construct(private readonly ResourceService $resourceService)
+    {
+    }
+
     /**
      * @param Village $data
      */
     public function normalize($data, ?string $format = null, array $context = []): array
     {
+        $troops            = 0;
         $troopAttackPower  = 0;
         $troopDefensePower = 0;
         foreach ($data->getTroops() as $troop) {
@@ -20,6 +26,7 @@ class VillageNormalizer implements NormalizerInterface
                 continue;
             }
 
+            $troops            += $troop->getAmount();
             $troopAttackPower  += $troop->getPower()->getAttack() * $troop->getAmount();
             $troopDefensePower += $troop->getPower()->getDefense() * $troop->getAmount();
         }
@@ -29,8 +36,13 @@ class VillageNormalizer implements NormalizerInterface
             'x'         => $data->getX(),
             'y'         => $data->getY(),
             'level'     => $data->getLevel(),
+            'caps'      => [
+                'storage'    => $this->resourceService->getWarehouseCap($data),
+                'population' => $this->resourceService->getFarmCap($data),
+            ],
             'resources' => array_map(fn($resource) => [
                 'category' => $resource->getCategory()->value(),
+                'pph'      => $this->resourceService->getProductionPerHour($resource->getResponsibleBuilding()),
                 'amount'   => $resource->getAmount(),
             ], $data->getResources()->toArray()),
             'buildings' => array_map(fn($building) => [
@@ -53,6 +65,7 @@ class VillageNormalizer implements NormalizerInterface
                 'createdAt' => $data->getCreatedAt()->format(DateTimeInterface::ATOM),
             ],
             'counters'  => [
+                'population'        => $troops,
                 'troopAttackPower'  => $troopAttackPower,
                 'troopDefensePower' => $troopDefensePower,
                 'incomingAttacks'   => mt_rand(0, 3)
