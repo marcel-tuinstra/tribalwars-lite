@@ -1,0 +1,15 @@
+body {
+  background-color: var(--color-base-300);
+}
+
+.validator {
+  & ~ .validator-hint {
+    display: none;
+  }
+
+  &:user-invalid, &:has(:user-invalid), &[aria-invalid]:not([aria-invalid="false"]) {
+    & ~ .validator-hint {
+      display: block;
+    }
+  }
+}

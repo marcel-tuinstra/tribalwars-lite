@@ -19,6 +19,10 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class ApiController extends AbstractController
 {
+    public function __construct(private readonly JWTTokenManagerInterface $jwtManager)
+    {
+    }
+
     #[Route('/api/ping', methods: ['GET'])]
     public function ping(): JsonResponse
     {
@@ -26,13 +30,13 @@ class ApiController extends AbstractController
     }
 
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(#[CurrentUser] ?UserInterface $user, JWTTokenManagerInterface $jwtManager): JsonResponse
+    public function login(#[CurrentUser] ?UserInterface $user): JsonResponse
     {
         if (null === $user) {
             return $this->json(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $token = $jwtManager->create($user);
+        $token = $this->jwtManager->create($user);
 
         return $this->json([
             'user'  => [
@@ -49,14 +53,15 @@ class ApiController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        $name          = $data['name'] ?? null;
         $email         = $data['email'] ?? null;
         $plainPassword = $data['password'] ?? null;
 
-        if (!$email || !$plainPassword) {
-            return $this->json(['error' => 'Missing email or password'], 400);
+        if (!$name || !$email || !$plainPassword) {
+            return $this->json(['error' => 'Missing name, email or password'], 400);
         }
 
-        $player         = new Player($email);
+        $player         = new Player($name, $email);
         $hashedPassword = $passwordHasher->hashPassword($player, $plainPassword);
         $player->setPassword($hashedPassword);
 

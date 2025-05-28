@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -11,40 +11,49 @@ export const useAuthStore = defineStore('auth', {
     async login(email: string, password: string) {
       const res = await fetch(API_BASE_URL + '/api/login', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password}),
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
 
-      if (!res.ok) throw new Error('Login failed');
-      const data = await res.json();
+      if (!res.ok) throw new Error('Login failed')
+      const data = await res.json()
 
-      this.token = data.token;
-      localStorage.setItem('token', this.token);
+      this.token = data.token
+      localStorage.setItem('token', this.token)
+    },
+    async register(name: string, email: string, password: string) {
+      const res = await fetch(API_BASE_URL + '/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      })
+
+      if (!res.ok) throw new Error('Register failed')
     },
 
     logout() {
-      this.token = '';
-      this.user = '';
-      localStorage.removeItem('token');
+      this.token = ''
+      this.user = ''
+      localStorage.removeItem('token')
     },
 
     async fetchProfile() {
-      if (!this.token) return;
+      if (!this.token) return
 
       const res = await fetch(API_BASE_URL + '/api/player/profile', {
         headers: {
-          'Authorization': `Bearer ${this.token}`,
+          Authorization: `Bearer ${this.token}`,
         },
-      });
+      })
 
       if (!res.ok) {
         // Token expired of invalid? Force logout
-        this.logout();
-        return;
+        this.logout()
+        return
       }
 
-      this.user = await res.json();
-      localStorage.setItem('user', JSON.stringify(this.user));
-    }
+      this.user = await res.json()
+      localStorage.setItem('user', JSON.stringify(this.user))
+    },
   },
-});
+})

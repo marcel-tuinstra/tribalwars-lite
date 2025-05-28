@@ -21,9 +21,18 @@ class PlayerService
             throw new RuntimeException('No available space for player village.');
         }
 
-        $village = new Village('Village of ' . $player->getEmail(), $coords['x'], $coords['y']);
+        $village = new Village(sprintf("%s's Village", $player->getName()), $coords['x'], $coords['y']);
         $village->setPlayer($player);
 
+        $this->em->persist($village);
+        $this->em->flush();
+
+        return $village;
+    }
+
+    public function transferVillageOwnership(Player $player, Village $village): Village
+    {
+        $village->setPlayer($player);
         $this->em->persist($village);
         $this->em->flush();
 

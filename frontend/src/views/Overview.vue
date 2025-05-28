@@ -1,35 +1,51 @@
+<script setup lang="ts">
+import { onMounted, ref, watchEffect } from 'vue'
+import VillageMap from '@/components/overview/VillageMap.vue'
+import { useVillageStore } from '@/stores/village'
+import { useAuthStore } from '@/stores/auth'
+import VillageListItem from '@/components/map/VillageListItem.vue'
+import MenuSide from '@/components/MenuSide.vue'
+import { buildingToName } from '@/utils/village.ts'
+
+const villageStore = useVillageStore()
+
+// Fetch player villages on mount
+onMounted(() => {
+  villageStore.fetchPlayerVillages()
+})
+
+const selectedVillage = ref(null)
+
+watchEffect(() => {
+  if (villageStore.playerVillages.length) {
+    selectedVillage.value = villageStore.playerVillages[0]
+  }
+})
+
+function selectVillage(village) {
+  selectedVillage.value = village
+}
+
+function onBuildingClick(building) {
+  alert(`Clicked on ${buildingToName(building.type)}`)
+}
+</script>
+
 <template>
-  <div class="flex flex-col md:flex-row h-full bg-gray-50">
-    <!-- Left: Compact villages list -->
-    <aside class="md:w-1/3 bg-white shadow p-4 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-200">
-      <h2 class="font-bold text-lg mb-4">Your Villages</h2>
-      <table class="w-full text-sm">
-        <thead class="hidden md:table-header-group sticky top-0 z-10 bg-white">
-        <tr>
-          <th class="text-left px-2 py-1">Village</th>
-          <th class="text-left px-2 py-1">Coords</th>
-          <th class="text-left px-2 py-1">Pop</th>
-          <th class="text-left px-2 py-1">Lvl</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr
+  <div class="flex flex-col md:flex-row h-full bg-base-100">
+    <aside class="hidden md:block w-100 m-4 rounded-box">
+      <MenuSide />
+
+      <ul class="list bg-base-200 rounded-box shadow-md overflow-y-auto overflow-x-hidden max-h-[calc(100vh-8rem)]">
+        <li class="p-4 pb-2 tracking-wide font-bold text-lg">Your Villages</li>
+
+        <VillageListItem
           v-for="village in villageStore.playerVillages"
           :key="village.id"
-          @click="selectVillage(village)"
-          :class="['cursor-pointer hover:bg-blue-100', selectedVillage.id === village.id ? 'bg-blue-200 font-bold' : '']"
-        >
-          <td class="px-2 py-1">{{ village.name }}</td>
-          <td class="px-2 py-1">({{ village.x }}, {{ village.y }})</td>
-          <td class="px-2 py-1">
-            {{ village.resources.find(r => r.category === 'population')?.amount ?? 'N/A' }}
-          </td>
-          <td class="px-2 py-1">
-            {{ village.level }}
-          </td>
-        </tr>
-        </tbody>
-      </table>
+          :village="village"
+          @list-click="(v) => selectVillage(v)"
+        />
+      </ul>
     </aside>
 
     <!-- Right: Village detail UI (graphic, resources, actions) -->
@@ -48,13 +64,18 @@
             <div>
               <h3 class="font-semibold mb-2">Resources</h3>
               <ul class="space-y-1">
-                <li v-for="resource in selectedVillage.resources">{{ resource.category }}: {{ resource.amount }}</li>
+                <li v-for="resource in selectedVillage.resources">
+                  {{ resource.category }}:
+                  {{ resource.amount }}
+                </li>
               </ul>
             </div>
             <div>
               <h3 class="font-semibold mb-2">Troops</h3>
               <ul class="space-y-1">
-                <li v-for="troop in selectedVillage.troops">{{ troop.role }}: {{ troop.amount }}</li>
+                <li v-for="troop in selectedVillage.troops">
+                  {{ troop.role }}: {{ troop.amount }}
+                </li>
               </ul>
             </div>
             <div>
@@ -74,49 +95,3 @@
     </main>
   </div>
 </template>
-
-<script setup>
-import {ref, watchEffect} from 'vue'
-import VillageMap from '@/components/overview/VillageMap.vue'
-
-import { onMounted } from 'vue';
-import { useVillageStore } from '@/stores/village';
-
-const villageStore = useVillageStore();
-
-// Fetch player villages on mount
-onMounted(() => {
-  villageStore.fetchPlayerVillages();
-});
-
-const selectedVillage = ref(null);
-
-watchEffect(() => {
-  if (villageStore.playerVillages.length) {
-    selectedVillage.value = villageStore.playerVillages[0];
-  }
-});
-
-function selectVillage(village) {
-  selectedVillage.value = village
-}
-
-function onBuildingClick(building) {
-  alert(`Clicked on ${getBuildingDisplayName(building.type)}`)
-}
-
-// Optional helper om display name te krijgen, zodat alles clean blijft
-function getBuildingDisplayName(type) {
-  switch (type) {
-    case 'lumber_camp': return 'Lumber Camp'
-    case 'clay_pit': return 'Clay Pit'
-    case 'iron_mine': return 'Iron Mine'
-    case 'barracks': return 'Barracks'
-    case 'farm': return 'Farm'
-    case 'warehouse': return 'Warehouse'
-    case 'hq': return 'Headquarters'
-    default: return 'Unknown Building'
-  }
-}
-
-</script>

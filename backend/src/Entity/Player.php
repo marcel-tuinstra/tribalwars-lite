@@ -25,6 +25,9 @@ class Player implements IdentifiableInterface, PasswordAuthenticatedUserInterfac
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $name;
+
     #[ORM\Column(length: 180, unique: true)]
     private string $email;
 
@@ -46,8 +49,9 @@ class Player implements IdentifiableInterface, PasswordAuthenticatedUserInterfac
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'player')]
     private Collection $notifications;
 
-    public function __construct(string $email)
+    public function __construct(string $username, string $email)
     {
+        $this->name  = $username;
         $this->email = $email;
 
         $this->villages      = new ArrayCollection();
@@ -60,6 +64,11 @@ class Player implements IdentifiableInterface, PasswordAuthenticatedUserInterfac
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
     }
 
     public function getEmail(): ?string
@@ -98,6 +107,13 @@ class Player implements IdentifiableInterface, PasswordAuthenticatedUserInterfac
 
     // Setters
     //////////////////////////////
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 
     public function setEmail(string $email): static
     {

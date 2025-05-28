@@ -13,6 +13,16 @@ class VillageNormalizer implements NormalizerInterface
      */
     public function normalize($data, ?string $format = null, array $context = []): array
     {
+        $troopAttackPower  = 0;
+        $troopDefensePower = 0;
+        foreach ($data->getTroops() as $troop) {
+            if (!$troop->getAmount()) {
+                continue;
+            }
+
+            $troopAttackPower  += $troop->getPower()->getAttack() * $troop->getAmount();
+            $troopDefensePower += $troop->getPower()->getDefense() * $troop->getAmount();
+        }
         return [
             'id'        => $data->getId(),
             'name'      => $data->getName(),
@@ -42,7 +52,11 @@ class VillageNormalizer implements NormalizerInterface
                 'isHuman'   => $data->isHuman(),
                 'createdAt' => $data->getCreatedAt()->format(DateTimeInterface::ATOM),
             ],
-            'counters'  => []
+            'counters'  => [
+                'troopAttackPower'  => $troopAttackPower,
+                'troopDefensePower' => $troopDefensePower,
+                'incomingAttacks'   => mt_rand(0, 3)
+            ]
         ];
     }
 

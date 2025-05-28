@@ -4,6 +4,6 @@ bin/console doctrine:schema:create
 sleep 1
 for i in {1..5}; do
   echo "Running batch $i..."
-  bin/console app:game:bots-generate --amount 200
+  bin/console app:game:bots-generate --amount 100
   sleep 1
 done
